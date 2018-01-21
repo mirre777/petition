@@ -1,0 +1,67 @@
+* {
+    box-sizing: border-box;
+}
+div {
+    display: flex;
+    justify-content: center;
+}
+input {
+    border: 2px solid black;
+}
+canvas {
+    background-color: white;
+    border-style: dashed;
+}
+#title, #sun {
+    justify-content: center;
+}
+#body {
+    position: absolute;
+    justify-content: center;
+    margin: 10px;
+    left: 50vw;
+    top: 50vh;
+    transform: translateX(-50%) translateY(-50%);
+    width: 100%;
+}
+#thank-you-div {
+    justify-content: center;
+    display: block;
+}
+#signers-div {
+    display: block;
+}
+#signers-div img {
+    height: 30px;
+}
+
+/* rain _______________________________*/
+html{height:100%;}
+
+body {
+background:#18606b;
+background:-webkit-gradient(linear,0% 0%,0% 100%, from(rgba(13,52,58,1) ), to(#000000)  );
+background: -moz-linear-gradient(top, rgba(13,52,58,1) 0%, rgba(0,0,0,1) 100%);
+
+overflow:hidden;}
+
+
+.drop {
+  background:-webkit-gradient(linear,0% 0%,0% 100%, from(rgba(13,52,58,1) ), to(rgba(255,255,255,0.6))  );
+  background: -moz-linear-gradient(top, rgba(13,52,58,1) 0%, rgba(255,255,255,.6) 100%);
+	width:1px;
+	height:89px;
+	position: absolute;
+	bottom:200px;
+	-webkit-animation: fall .63s linear infinite;
+  -moz-animation: fall .63s linear infinite;
+
+}
+
+/* animate the drops*/
+@-webkit-keyframes fall {
+	to {margin-top:900px;}
+}
+@-moz-keyframes fall {
+	to {margin-top:900px;}
+}
