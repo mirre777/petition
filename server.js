@@ -248,7 +248,7 @@ app.get('/petition/profile', function(request, response) {
         return response.redirect('/register');
     }
     else {
-        getUserProfile(request.body.first, request.body.last, request.body.email, request.body.age, request.body.city, request.body.website, request.session.userId)
+        getUserProfile(request.body.first, request.body.last, request.body.email, request.body.city, request.body.age, request.body.website, request.session.userId)
             .then(function(userprofile) {
                 console.log('update successful');
                 response.render('editprofile', {
@@ -271,12 +271,13 @@ app.get('/petition/profile', function(request, response) {
 
 app.post('/petition/profile', requireLogIn, function(request, response) {
     console.log('in app.post /profile');
-    editYourProfile(request.body.age, request.body.city, request.body.website, request.session.userId)
-        .then(function(success) {
+    editYourProfile(request.body.city, request.body.age, request.body.website, request.session.userId)
+        .then(function(userprofile) {
             console.log('profile successfully updated');
             response.render('editprofile', {
                 layout: 'basiclayout',
-                css: 'stylesheet'
+                css: 'stylesheet',
+                userprofile: userprofile
             });
         })
         .catch(function(err) {
@@ -297,6 +298,7 @@ app.post('/petition/profile', requireLogIn, function(request, response) {
 //if !request.cookies.signed, redirect
 function requireSignature(request, response, next) {
     if (!request.session.sigId) {
+        console.log('in requireSignature, user does not have sigId, redirect to /petition');
         response.redirect('/petition');
     }
     else {
@@ -305,6 +307,7 @@ function requireSignature(request, response, next) {
 }
 function requireLogIn(request, response, next) {
     if (!request.session.userId) {
+        console.log('in requireLogIn, user does not have userId, redirect to /register');
         response.redirect('/register');
     }
     else {

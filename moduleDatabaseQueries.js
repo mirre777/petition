@@ -95,12 +95,14 @@ function getSigners () {
 }
 
 
-function getUserProfile (first, last, email, age, city, website, id) {
+function getUserProfile (first, last, email, city, age, website, user_id) {
     const q = `SELECT
-    first, last, email, age, city, website
+    first, last, email, city, age, website
     FROM users_table
-    WHERE id = $1`;
-    const params = [first, last, email, age, city, website, id];
+    LEFT JOIN users_profile
+    ON users_table.id = users_profile.user_id
+    WHERE user_id = $1`;
+    const params = [user_id];
     return db.query(q, params)
         .then(function(results) {
             return results.rows[0];
@@ -111,17 +113,18 @@ function getUserProfile (first, last, email, age, city, website, id) {
 }
 
 
-function editYourProfile (age, city, website, id) {
-    const q = `INSERT INTO users_table (age, city, website, id) VALUES ($1, $2, $3, $4)
-    ON CONFLICT (id)
-    DO UPDATE SET id = EXCLUDED.id, age = EXCLUDED.age, city = EXCLUDED.city, website = EXCLUDED.website`;
-    const params = [age, city, website, id];
+function editYourProfile (city, age, website, user_id) {
+    const q = `INSERT INTO users_profile (city, age, website, user_id) VALUES ($1, $2, $3, $4)
+        ON CONFLICT (user_id)
+        DO UPDATE SET city = $1, age = $2, website = $3`;
+    const params = [city, age, website, user_id];
     return db.query(q, params)
-        .then(function(results) {
+        .then(function(userprofile) {
             console.log('successful edit');
+            return userprofile.rows[0];
         })
         .catch(function(err) {
-            console.log('error in editProfile', err);
+            console.log('error in editYourProfile', err);
         });
 }
 
