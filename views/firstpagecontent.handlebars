@@ -1,14 +1,15 @@
-<section class="rain"></section>
-<!-- <div><h1>Add some sunlight</h1></div>
-<br>
-<br>
-<br> -->
+
 <div>
+<section class="rain"></section>
     <form action="/petition" method="post">
-      <p><strong>{{first}}</strong></p>
-      <p><strong>{{last}}</strong></p><br>
+    <h2>Light up this city!</h2>
+      <p><strong>{{first}} {{last}}</strong></p>
       <input id="signaturehidden" type="hidden" name="signaturehidden">
       <canvas id="canvas" width="300" height="100" name="canvas" value="accepted"></canvas><br>
-      <input id="submit-button" type="submit" value="Submit">
+      <input class="submit-button" type="submit" value="Submit">
     </form>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="/script.js" charset="utf-8"></script>
+<script src="/script-rain.js" charset="utf-8"></script>

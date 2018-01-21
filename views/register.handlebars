@@ -1,13 +1,18 @@
-<section class="rain"></section>
+
 <section>
-    <h2>Register</h2>
+<section class="rain"></section>
     <div>
-        <form method="post">
+        <h2>Register</h2>
+        <form id="register-form" action="/register" method="post">
             <input id="first" type="text" name="first" placeholder="First Name" value="a" required><br>
             <input id="last" type="text" name="last" placeholder="Last Name" value="a" required><br>
             <input id="email" type="text" name="email" placeholder="Email" value="a@a.nl"required><br>
             <input id="password" type="password" width="200" height="100" value="a" name="password" placeholder="password" required></input><br>
-            <input id="submit-button" type="submit">
+            <input class="submit-button" type="submit">
         </form>
+        <h2>Or <a href="/login">log in</a></h2>
     </div>
 </section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="/script-rain.js" charset="utf-8"></script>

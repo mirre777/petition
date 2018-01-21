@@ -1,0 +1,18 @@
+
+<section>
+    <div>
+        <h2>Edit your profile</h2>
+        <form id="profile-form" action="/profile" method="post">
+            <p><strong>{{first}} {{last}}</strong></p>
+            <p><strong>{{email}}</strong></p>
+            <input id="password" type="password" width="200" height="100" name="password" placeholder="Password" ></input><br>
+            <input id="city" type="text" name="city" placeholder="City" ><br>
+            <input id="age" type="number" name="age" placeholder="Age" ><br>
+            <input id="website" type="text" name="website" placeholder="Favorite website?"><br>
+            <input class="submit-button" type="submit">
+        </form>
+    </div>
+</section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="/script-rain.js" charset="utf-8"></script>

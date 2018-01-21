@@ -12,6 +12,9 @@ CREATE TABLE users_table (
     first VARCHAR(255) not null,
     last VARCHAR(255) not null,
     email VARCHAR(255) not null UNIQUE,
+    age INTEGER,
+    city VARCHAR(255),
+    website VARCHAR(255),
     hashedpassword VARCHAR(255) not null,
     account_created TIMESTAMP
 );

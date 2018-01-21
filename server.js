@@ -8,6 +8,10 @@ var insertRegisterData = require('./moduleDatabaseQueries.js').insertRegisterDat
 var getSignatureId = require('./moduleDatabaseQueries.js').getSignatureId;
 var hashPassword = require('./passwordModule.js').hashPassword;
 var checkPassword = require('./passwordModule.js').checkPassword;
+var getUserId = require('./moduleDatabaseQueries.js').getUserId;
+var getHashedpw = require('./moduleDatabaseQueries.js').getHashedpw;
+var editYourProfile = require('./moduleDatabaseQueries.js').editYourProfile;
+var getUserProfile = require('./moduleDatabaseQueries.js').getUserProfile;
 
 var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
@@ -32,7 +36,7 @@ app.listen(8080, function(){
 
 //ROUTES____________________________________________________________
 
-//register user
+//REGISTER___________________________________________________________
 app.get('/register', function(request, response) {
     console.log('in app.get/register');
     response.render('register', {
@@ -57,26 +61,89 @@ app.post('/register', function(request, response) {
                         request.session.userId = userId;
                         request.session.first = request.body.first;
                         request.session.last = request.body.last;
+                        request.session.email = request.body.email;
                         console.log('user id created')
                         return response.redirect('/petition/');
-                    });
+                    })
+                    .catch(function(err) {
+                        console.log('error setting id, first, last to the session', err)
+                    })
             }).catch(function(err) {
-                console.log('error in post/register' , err)
+                console.log('error after hashing password' , err)
             });
     }
     else {
-        console.log('user alread has userId, redirect to /petition');
+        console.log('user already has userId, redirect to /petition');
         response.redirect('/petition');
     }
-    //const q = 'SELECT * FROM petition WHERE email is $1'
-    //const params = [email]
-    //db query(q, params).then(results => checkPassword)
 });
 
 
-//set cookie/session Id
-//request.cookies.cookieSet is now request.session.sigId
-//don't check for NOT cookie, because it would redirect them to /petition again, ust check for DO have cookie, then redirect to petition/signed.
+//LOGIN____________________________________________________________________
+//app.get('/login')
+//login: check if email exists, compare password to make sure request.body.password hash matches the hased password
+//.then doesMatch//if doesMatch//
+
+//const q = 'SELECT * FROM petition WHERE email is $1'
+//const params = [email]
+//db query(q, params).then(results => checkPassword)
+app.get('/login', function(request, response) {
+    console.log('in app.get /login');
+    if (request.session.userId) {
+        console.log('user has userId, redirect to /petition')
+        return response.redirect('/petition');
+    }
+    if (request.session.sigId) {
+        console.log('user has sigId, redirect to /petition/signed')
+        return response.redirect('petition/signed');
+    }
+    else {
+        response.render('login', {
+            layout: 'basiclayout',
+            css: 'stylesheet.css'
+        })
+    }
+});
+
+
+app.post('/login', function(request, response) {
+    console.log('in app.post /login');
+    //hashPassword
+    getHashedpw(request.body.email)
+        .then(function(hashedPasswordFromDatabase) {
+            console.log('this is hashedPasswordFromDatabase', hashedPasswordFromDatabase.hashedpassword);
+            checkPassword(request.body.password, hashedPasswordFromDatabase.hashedpassword)
+                .then(function(doesMatch){
+                    if(doesMatch) {
+                        getUserId(request.body.email)
+                            .then(function(userId) {
+                                request.session.userId = userId;
+                                return response.redirect('/petition');
+                            })
+                            .catch(function(err) {
+                                console.log('failed to set userId to session', err);
+                            });
+                    }
+                })
+                .catch(function(err) {
+                    console.log(err)
+                });
+        })
+        .catch(function(doesNotMatch){
+            if(doesNotMatch) {
+                response.render('loginERROR', {
+                    layout: 'basiclayout',
+                    css: 'stylesheet.css'
+                });
+            }
+        });
+    //get userid from the table and set userid for the session: function getuserId().then(function(userId) {request.session.userId = userId})
+
+});
+
+
+//SIGN_____________________________________________________________________
+//set signature Id
 app.get('/petition', function(request, response) {
     console.log('in app.get /petition');
     if(request.session.userId) {
@@ -91,8 +158,6 @@ app.get('/petition', function(request, response) {
                 last: request.session.last,
                 layout: 'basiclayout',
                 css:'stylesheet.css'
-
-                ////prefill in the request.session.first and request.session.last. or add in data
             });
 
         }
@@ -103,16 +168,16 @@ app.get('/petition', function(request, response) {
 });
 
 
-//db query
 app.post('/petition', function (request, response) {
-    console.log(request.body);
+    console.log('in app.post /petition');
+    // console.log(request.body);
 //send data to server if all field are filled in
     if (request.body.signaturehidden && request.session.userId) {
         sign(request.body.signaturehidden, request.session.userId)
 //get back id and turn it into cookie by attaching it to session.
             .then(function(sigId) {
                 request.session.sigId = sigId;
-                console.log('sigId set', sigId);
+                console.log('sigId set');
                 response.redirect('/petition/signed');
             })
             .catch(function(err) {
@@ -129,10 +194,7 @@ app.post('/petition', function (request, response) {
 });
 
 
-//app.get('/login')
-//login: check if email exists, compare password to make sure request.body.password hash matches the hased password
-//.then doesMatch//if doesMatch//
-
+//SIGNED__________________________________________________________________
 //received data (submit) in databse: error, succes: create a row for the user
 //cookies
 //don't check for NOT cookieSet, because it would redirect them to /petition again, ust check for DO have cookieSet, then redirect to petition/signed.
@@ -155,6 +217,7 @@ app.get('/petition/signed', requireSignature, function(request, response) {
 });
 
 
+//1 SIGNERS_________________________________________________________________
 app.get('/petition/signers', requireSignature, function(request, response) {
     console.log('in app.get /petition/signers');
     if(request.session.userId) {
@@ -175,21 +238,74 @@ app.get('/petition/signers', requireSignature, function(request, response) {
         response.redirect('/register');
     }
 });
-//join tables
-//
 
+
+//2 EDIT PROFILE___________________________________________________
+app.get('/petition/profile', function(request, response) {
+    console.log('in app.get /profile');
+    if (!request.session.userId) {
+        console.log('user does not have userId');
+        return response.redirect('/register');
+    }
+    else {
+        getUserProfile(request.body.first, request.body.last, request.body.email, request.body.age, request.body.city, request.body.website, request.session.userId)
+            .then(function(userprofile) {
+                console.log('update successful');
+                response.render('editprofile', {
+                    layout: 'basiclayout',
+                    css: 'stylesheet',
+                    userprofile: userprofile
+                    //city, age, favorite website? db query to select all information and fill them in in the fields
+                });
+            })
+            .catch(function(err) {
+                console.log('update unsuccessful');
+                response.render('editprofileERROR', {
+                    layout: 'basiclayout',
+                    css: 'stylesheet',
+                });
+            });
+    }
+});
+
+
+app.post('/petition/profile', requireLogIn, function(request, response) {
+    console.log('in app.post /profile');
+    editYourProfile(request.body.age, request.body.city, request.body.website, request.session.userId)
+        .then(function(success) {
+            console.log('profile successfully updated');
+            response.render('editprofile', {
+                layout: 'basiclayout',
+                css: 'stylesheet'
+            });
+        })
+        .catch(function(err) {
+            console.log('editing profile did not work', err);
+        });
+});
+
+//3 UNSIGN_________________________________________________________
+//NOTES____________________________________________________________
 //promise, with resolve, reject in module
 //then catch in this route
-//response.render the contentpage (loopng through return of db query array of names), or placig a partial in the contenpage where i loop throught eh return db query, array ofnames + basiclayout
+//response.render the contentpage (loopng through return of db query ARRAY of names), or placig a partial in the contenpage where i loop throught eh return db query, array ofnames + basiclayout
 
 
-//functions we need in multiple paths______________________________________________________
+//FUNCTIONS______________________________________________________
 
 
 //if !request.cookies.signed, redirect
 function requireSignature(request, response, next) {
     if (!request.session.sigId) {
         response.redirect('/petition');
+    }
+    else {
+        next();
+    }
+}
+function requireLogIn(request, response, next) {
+    if (!request.session.userId) {
+        response.redirect('/register');
     }
     else {
         next();
