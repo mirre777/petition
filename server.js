@@ -12,6 +12,7 @@ var getUserId = require('./moduleDatabaseQueries.js').getUserId;
 var getHashedpw = require('./moduleDatabaseQueries.js').getHashedpw;
 var editYourProfile = require('./moduleDatabaseQueries.js').editYourProfile;
 var getUserProfile = require('./moduleDatabaseQueries.js').getUserProfile;
+var unsign = require('./moduleDatabaseQueries.js').unsign;
 
 var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
@@ -248,12 +249,15 @@ app.get('/petition/profile', function(request, response) {
         return response.redirect('/register');
     }
     else {
-        getUserProfile(request.body.first, request.body.last, request.body.email, request.body.city, request.body.age, request.body.website, request.session.userId)
+        getUserProfile(request.session.userId)
             .then(function(userprofile) {
-                console.log('update successful');
+                console.log('update successful', 'userprofile: ', userprofile);
                 response.render('editprofile', {
                     layout: 'basiclayout',
                     css: 'stylesheet',
+                    first: request.session.first,
+                    last: request.session.last,
+                    email: request.session.email,
                     userprofile: userprofile
                     //city, age, favorite website? db query to select all information and fill them in in the fields
                 });
@@ -273,15 +277,27 @@ app.post('/petition/profile', requireLogIn, function(request, response) {
     console.log('in app.post /profile');
     editYourProfile(request.body.city, request.body.age, request.body.website, request.session.userId)
         .then(function(userprofile) {
-            console.log('profile successfully updated');
-            response.render('editprofile', {
-                layout: 'basiclayout',
-                css: 'stylesheet',
-                userprofile: userprofile
-            });
+            console.log('edityourprofile, profile successfully updated', userprofile);
+            return response.redirect('/petition/profile')
         })
         .catch(function(err) {
             console.log('editing profile did not work', err);
+        });
+});
+
+
+app.post('/petition/unsign', requireLogIn, requireSignature, function(request, response) {
+    console.log('in app.post /petition/unsign');
+    unsign(request.session.userId)
+        .then(function(unsigned) {
+            console.log('unsigned');
+            return response.render('firstpagecontentUNSIGNED', {
+                layout: 'basiclayout',
+                css: 'stylesheet'
+            });
+        })
+        .catch(function(stillsigned) {
+            console.log('not unsigned');
         });
 });
 

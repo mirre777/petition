@@ -90,21 +90,20 @@ function getSigners () {
             return results.rows;
         })
         .catch(function(err) {
-            console.log('problem in getSigners', err)
+            console.log('problem in getSigners', err);
         });
 }
 
 
-function getUserProfile (first, last, email, city, age, website, user_id) {
+function getUserProfile (user_id) {
     const q = `SELECT
-    first, last, email, city, age, website
-    FROM users_table
-    LEFT JOIN users_profile
-    ON users_table.id = users_profile.user_id
+    city, age, website
+    FROM users_profile
     WHERE user_id = $1`;
     const params = [user_id];
     return db.query(q, params)
         .then(function(results) {
+            console.log(results.rows)
             return results.rows[0];
         })
         .catch(function(err) {
@@ -114,20 +113,34 @@ function getUserProfile (first, last, email, city, age, website, user_id) {
 
 
 function editYourProfile (city, age, website, user_id) {
-    const q = `INSERT INTO users_profile (city, age, website, user_id) VALUES ($1, $2, $3, $4)
+    const q =
+    `INSERT INTO users_profile (city, age, website, user_id) VALUES ($1, $2, $3, $4)
         ON CONFLICT (user_id)
-        DO UPDATE SET city = $1, age = $2, website = $3`;
+        DO UPDATE SET city = $1, age = $2, website = $3
+        `;
     const params = [city, age, website, user_id];
     return db.query(q, params)
         .then(function(userprofile) {
-            console.log('successful edit');
-            return userprofile.rows[0];
+            console.log('in edityourprofile, successful edit');
+
         })
         .catch(function(err) {
             console.log('error in editYourProfile', err);
         });
 }
 
+
+function unsign (user_id) {
+    const q = `DELETE canvas WHERE user_id = $1`;
+    const params = [user_id];
+    return db.query(q, params)
+        .then(function(results) {
+            console.log('unsign successfull');
+        })
+        .catch(function(err) {
+            console.log('error in unsign', err);
+        });
+}
 //create columns in table
 exports.getSigners = getSigners;
 exports.sign = sign;
@@ -137,3 +150,4 @@ exports.getUserId = getUserId;
 exports.getHashedpw = getHashedpw;
 exports.editYourProfile = editYourProfile;
 exports.getUserProfile = getUserProfile;
+exports.unsign = unsign;

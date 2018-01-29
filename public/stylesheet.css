@@ -5,10 +5,26 @@ div, form {
     display: flex;
     align-items: center;
     flex-direction: column;
-
+}
+section {
+    display: block;
 }
 input {
     border: 2px solid black;
+    background-color: rgb(220, 222, 232);
+    border-radius: 30px;
+    padding: 10px;
+}
+#title-sun {
+    display: block;
+    margin: 30px;
+}
+#description, #thank-you-line {
+    width: 50vw;
+}
+#body {
+    margin: 10px;
+    width: 100%;
 }
 canvas {
     background-color: white;
@@ -16,6 +32,7 @@ canvas {
     border-radius: 30px;
     margin: 10px;
 }
+
 h1 {
     font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
     font-size: 70px;
@@ -23,6 +40,10 @@ h1 {
     font-weight: bolder;
     padding: 3% 220px 0 220px;
     margin-left: 15px;
+}
+h1 img {
+    width: 60px;
+    height: 60px;
 }
 h2 {
     font-family: "Helvetica Neue";
@@ -37,52 +58,34 @@ p {
     line-height: 24px;
     font-weight: bolder;
 }
-#title-sun {
-    display: block;
-}
-#title, #sun {
-
-}r
-#body {
-    position: absolute;
-    /* justify-content: center; */
-    margin: 10px;
-    left: 50vw;
-    top: 50vh;
-    transform: translateX(-50%) translateY(-50%);
-    width: 100%;
-}
 #thank-you-div {
     justify-content: center;
-    display: block;
-}
-#signers-div {
     display: block;
 }
 #signers-div img {
     height: 30px;
 }
-#signers-line {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-}
 #submit-button {
-    /* align-self: center; */
+    background-color: rgb(184, 186, 194);
 }
 
 /* Rain________________________________________ */
 html{height:100%;}
+/* #sun-background {
+    background: linear-gradient(
+      red, #f03e06
+    );
+} */
 body {
 background:#0D343A;
-background:-webkit-gradient(linear,0% 40%,0% 100%, from(rgba(70, 131, 140, 1) ), to(#000000)  );
+background:-webkit-gradient(linear,0% 40%,0% 100%, from(#ffffff ), to(#8cd2e2) );
 background: -moz-linear-gradient(top, rgba(13,52,58,1) 0%, rgba(0,0,0,1) 100%);
 overflow:hidden;}
 
 .drop {
-  background:-webkit-gradient(linear,0% 0%,0% 100%, from(rgba(13,52,58,1) ), to(rgba(255,255,255,0.6))  );
+  background:-webkit-gradient(linear,0% 0%,0% 100%, from(rgba(30, 175, 198, 1) ), to(rgba(255,255,255,0.6))  );
   background: -moz-linear-gradient(top, rgba(13,52,58,1) 0%, rgba(255,255,255,.6) 100%);
-	width:1px;
+	width:2px;
 	height:89px;
 	position: absolute;
 	bottom:200px;

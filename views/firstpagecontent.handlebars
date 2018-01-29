@@ -1,9 +1,13 @@
 
 <div>
-<section class="rain"></section>
+    <section class="rain"></section>
+    
+    <div>
+        <h2>Light up this city!</h2>
+        <p><strong>{{first}} {{last}}</strong></p>
+    </div>
+
     <form action="/petition" method="post">
-    <h2>Light up this city!</h2>
-      <p><strong>{{first}} {{last}}</strong></p>
       <input id="signaturehidden" type="hidden" name="signaturehidden">
       <canvas id="canvas" width="300" height="100" name="canvas" value="accepted"></canvas><br>
       <input class="submit-button" type="submit" value="Submit">
