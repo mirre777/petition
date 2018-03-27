@@ -18,7 +18,7 @@ app.set('view engine', 'handlebars');
 app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
 app.use(cookieSession ({
-    secret: require('./secrets.json').sessSecret,
+    secret: require('./secret.json').sessSecret,
     maxAge: 1000 * 60 * 60 * 24 * 14
 }));
 //function of sessScret is adding making itmore complicated to get the signature with user id and hash. You are adding a random string to the signature.

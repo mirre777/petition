@@ -1,7 +1,7 @@
 //requirespiced-pg
 const spicedPg = require('spiced-pg');
 //require secrets.json with paasword and user
-const {dbUser, dbPass} = require('./secrets.json');
+const {dbUser, dbPass} = require('./secret.json');
 //spiced pg database with passord and user
 var db = spicedPg(`postgres:${dbUser}:${dbPass}@localhost:5432/petition`);
 

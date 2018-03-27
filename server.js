@@ -24,7 +24,7 @@ app.set('view engine', 'handlebars');
 app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
 app.use(cookieSession ({
-    secret: require('./secrets.json').sessSecret,
+    secret: require('./secret.json').sessSecret,
     maxAge: 1000 * 60 * 60 * 24 * 14
 }));
 //function of sessScret is adding making itmore complicated to get the signature with user id and hash. You are adding a random string to the signature.
@@ -301,7 +301,17 @@ app.post('/petition/unsign', requireLogIn, requireSignature, function(request, r
         });
 });
 
+
+app.get('*', function(request, response) {
+    console.log('in app.get *');
+    return response.redirect('/register');
+});
+
+
 //3 UNSIGN_________________________________________________________
+//missing
+
+
 //NOTES____________________________________________________________
 //promise, with resolve, reject in module
 //then catch in this route
@@ -321,6 +331,8 @@ function requireSignature(request, response, next) {
         next();
     }
 }
+
+
 function requireLogIn(request, response, next) {
     if (!request.session.userId) {
         console.log('in requireLogIn, user does not have userId, redirect to /register');
